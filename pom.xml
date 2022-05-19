@@ -29,6 +29,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -38,7 +47,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.5.2</version>
+            <version>1.6.8</version>
         </dependency>
 
         <dependency>
@@ -56,6 +65,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
     </dependencies>
@@ -80,13 +97,13 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.7</version>
                 <configuration>
-                    <includes>
-                        <include>com/upgrade/campsitereservations/**</include>
-                    </includes>
                     <excludes>
-                        <exclude>com/upgrade/campsitereservations/CampsiteReservationsApplication.class</exclude>
-                        <exclude>com/upgrade/campsitereservations/exceptions/*.class</exclude>
-                        <exclude>com/upgrade/campsitereservations/exceptions/*.class</exclude>
+                        <exclude>com/upgrade/campsitereservations/CampsiteReservationsApplication.**</exclude>
+                        <exclude>com/upgrade/campsitereservations/exception/*.class</exclude>
+                        <exclude>com/upgrade/campsitereservations/config/*.class</exclude>
+                        <exclude>com/upgrade/campsitereservations/model/*.class</exclude>
+                        <exclude>com/upgrade/campsitereservations/model/entity/*.class</exclude>
+                        <exclude>com/upgrade/campsitereservations/repository/*.class</exclude>
                     </excludes>
                     <rules>
                         <rule>
@@ -95,12 +112,12 @@
                                 <limit>
                                     <counter>LINE</counter>
                                     <value>COVEREDRATIO</value>
-                                    <minimum>95</minimum>
+                                    <minimum>0.95</minimum>
                                 </limit>
                                 <limit>
                                     <counter>BRANCH</counter>
                                     <value>COVEREDRATIO</value>
-                                    <minimum>95</minimum>
+                                    <minimum>0.95</minimum>
                                 </limit>
                             </limits>
                         </rule>
@@ -115,7 +132,6 @@
                     </execution>
                     <execution>
                         <id>jacoco-check</id>
-                        <phase>test</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -123,9 +139,6 @@
                     <execution>
                         <id>jacoco-report</id>
                         <phase>test</phase>
-                        <configuration>
-                            <outputDirectory>target/jacoco-report</outputDirectory>
-                        </configuration>
                         <goals>
                             <goal>report</goal>
                         </goals>
