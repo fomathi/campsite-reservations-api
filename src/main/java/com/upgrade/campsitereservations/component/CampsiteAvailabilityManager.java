@@ -1,6 +1,5 @@
 package com.upgrade.campsitereservations.component;
 
-import com.upgrade.campsitereservations.exception.NoAvailabilityException;
 import com.upgrade.campsitereservations.model.Availability;
 import com.upgrade.campsitereservations.model.entity.Reservation;
 import com.upgrade.campsitereservations.repository.ReservationRepository;
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class CampsiteAvailabilityManager {
-    private static final String NO_AVAILABILITY = "No campsite is available for the provided request";
 
     private final ReservationRepository reservationRepository;
 
@@ -36,10 +34,25 @@ public class CampsiteAvailabilityManager {
             availabilityStartIndex = 1;
             availabilityEndIndex = availableDatesInTheNext30Days.indexOf(to);
         } else {
-            throw new NoAvailabilityException(NO_AVAILABILITY);
+            return Availability.builder().availableDates(new ArrayList<>()).build();
         }
 
         return buildAvailability(availableDatesInTheNext30Days, availabilityStartIndex, availabilityEndIndex);
+    }
+
+    public Availability findAvailability(LocalDate from, LocalDate to, List<LocalDate> oldReservationsDates) {
+        Availability availability = findAvailability(from, to);
+        List<LocalDate> availableDates = availability.getAvailableDates();
+        availableDates = updateAvailableDateWithOldReservationDates(availableDates, oldReservationsDates);
+        availability.setAvailableDates(availableDates);
+        return availability;
+    }
+
+    private List<LocalDate> updateAvailableDateWithOldReservationDates(List<LocalDate> availableDates, List<LocalDate> oldReservationsDates) {
+        for(LocalDate date: oldReservationsDates) {
+            availableDates.add(date);
+        }
+        return availableDates;
     }
 
     private Availability buildAvailability(List<LocalDate> availabilityDates, int start, int end) {

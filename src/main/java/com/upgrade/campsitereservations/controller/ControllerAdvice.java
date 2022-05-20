@@ -2,6 +2,7 @@ package com.upgrade.campsitereservations.controller;
 
 import com.upgrade.campsitereservations.exception.BadRequestException;
 import com.upgrade.campsitereservations.exception.NoAvailabilityException;
+import com.upgrade.campsitereservations.exception.NotFoundException;
 import com.upgrade.campsitereservations.model.ApiError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class ControllerAdvice {
                 .build();
     }
 
-    @ExceptionHandler(NoAvailabilityException.class)
+    @ExceptionHandler({NoAvailabilityException.class, NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ApiError handleNotFound(Exception ex) {

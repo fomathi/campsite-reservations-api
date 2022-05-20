@@ -31,6 +31,13 @@ public class Validator {
 
     }
 
+    public static boolean isReservationLessThan4Days(String from, String to, int maxReservationDays) {
+        LocalDate startDate = LocalDate.parse(from);
+        LocalDate endDate = LocalDate.parse(to);
+        LocalDate maxDate = startDate.plusDays(3);
+        return maxDate.isAfter(endDate) || maxDate.equals(endDate);
+    }
+
     private static boolean isReservationStartDateValidateMinDateBeforeStart(String from, LocalDate today, int minDaysBeforeStart) {
         return today.plusDays(minDaysBeforeStart).isBefore(LocalDate.parse(from)) ||
                 today.plusDays(minDaysBeforeStart).equals(LocalDate.parse(from));
