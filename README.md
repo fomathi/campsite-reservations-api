@@ -7,7 +7,7 @@ It's built using Spring boot framework and a H2 in memory DB.
 * Maven 3
 
 ## Documentation
-* The API documentation is accessible at http://localhost:8080/swagger-ui when it's started.
+* The API documentation is accessible at http://localhost:8080/swagger-ui/index.html when it's started.
 * The API unit tests report can be found in th folder target/site/jacoco/index.html
 
 ## Build and run

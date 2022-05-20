@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequestMapping("/availability")
-@Tag(name = "Campsite Reservation Api")
+@Tag(name = "Campsite Availability Api")
 public class AvailabilityController {
 
     private final AvailabilityService availabilityService;
@@ -31,7 +31,7 @@ public class AvailabilityController {
     @Operation(description = "Get Campsite Availability", summary = "Provide information of the\n" +
             "availability of the campsite for a given date range with the default being 1 month")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "202", description = "Successful request"),
+            @ApiResponse(responseCode = "200", description = "Successful request"),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = ApiError.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ApiError.class))),
             @ApiResponse(responseCode = "404", description = "No Availability found", content = @Content(schema = @Schema(implementation = ApiError.class))),

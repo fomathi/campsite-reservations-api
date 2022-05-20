@@ -23,4 +23,21 @@ public class Validator {
     public static boolean isAvailabilityRequestValid(String from, String to) {
         return LocalDate.parse(from).isBefore(LocalDate.parse(to));
     }
+
+    public static boolean isReservationStartDateValid(String from, int minDaysBeforeStart, int maxDaysBeforeStart) {
+        LocalDate today = LocalDate.now();
+        return isReservationStartDateValidateMinDateBeforeStart(from, today, minDaysBeforeStart) &&
+                isReservationStartDateValidateMaxDateBeforeStart(from, today, maxDaysBeforeStart);
+
+    }
+
+    private static boolean isReservationStartDateValidateMinDateBeforeStart(String from, LocalDate today, int minDaysBeforeStart) {
+        return today.plusDays(minDaysBeforeStart).isBefore(LocalDate.parse(from)) ||
+                today.plusDays(minDaysBeforeStart).equals(LocalDate.parse(from));
+    }
+
+    private static boolean isReservationStartDateValidateMaxDateBeforeStart(String from, LocalDate today, int maxDaysBeforeStart) {
+        return LocalDate.parse(from).isBefore(today.plusDays(maxDaysBeforeStart)) ||
+                LocalDate.parse(from).equals(today.plusDays(maxDaysBeforeStart));
+    }
 }

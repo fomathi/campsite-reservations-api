@@ -19,4 +19,9 @@ spring:
 campsite:
   availability:
     defaultDateRange: 30
+  reservation:
+    maxReservationDays: 3
+    minDaysBeforeStart: 1
+    maxDaysBeforeStart: 30
+
 
