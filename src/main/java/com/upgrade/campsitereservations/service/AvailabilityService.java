@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Service
 public class AvailabilityService {
     private static final String INVALID_DATE = "Invalid availability request parameters";
+    private static final String INVALID_DATE_FORMAT = "Invalid date format";
     private static final String NO_AVAILABILITY = "No campsite is available for the provided request";
 
     private final AvailabilityConfig availabilityConfig;
@@ -28,7 +29,9 @@ public class AvailabilityService {
 
     public Availability getAvailability(String from, String to) {
         Availability availability;
-        if (validator.isAvailabilityRangeProvided(from, to)) {
+        if(!validator.isDatesFormatValid(from, to) ) {
+            throw new BadRequestException(INVALID_DATE_FORMAT);
+        } else if (validator.isAvailabilityRangeProvided(from, to)) {
             if(!validator.isAvailabilityRequestValid(from,to)) {
                 throw new BadRequestException(INVALID_DATE);
             }

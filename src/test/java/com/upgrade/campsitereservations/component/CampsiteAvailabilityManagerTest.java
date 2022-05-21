@@ -69,17 +69,32 @@ class CampsiteAvailabilityManagerTest {
         }
 
         @Test
-        @DisplayName("Given a range date with No availability, then throw NoAvailabilityException")
+        @DisplayName("Given a range date with No availability, then return empty availability array")
         void testFindAvailability_4() {
             LocalDate from = LocalDate.now().plusDays(31);
             LocalDate to = from.plusDays(3);
             when(reservationRepository.findNext30DaysReservations()).thenReturn(buildReservationsList());
 
-            NoAvailabilityException exception = assertThrows(NoAvailabilityException.class, ()->{
-                Availability availability = availabilityManager.findAvailability(from, to);
-            });
+            Availability availability = availabilityManager.findAvailability(from, to);
 
-            assertEquals("No campsite is available for the provided request", exception.getMessage());
+            assertEquals(0, availability.getAvailableDates().size());
+        }
+
+        @Test
+        @DisplayName("Given a valid date range, then return the campsite availability")
+        void testFindAvailability_5() {
+            LocalDate from = LocalDate.now().plusDays(2);
+            LocalDate to = from.plusDays(10);
+            List<LocalDate> oldReservationsDates = new ArrayList<>();
+            oldReservationsDates.add(from.minusDays(2));
+            when(reservationRepository.findNext30DaysReservations()).thenReturn(buildReservationsList());
+
+            Availability availability = availabilityManager.findAvailability(from, to, oldReservationsDates);
+
+            assertEquals(6, availability.getAvailableDates().size());
+            assertTrue(availability.getAvailableDates().contains(from));
+            assertTrue(availability.getAvailableDates().contains(to));
+            assertTrue(availability.getAvailableDates().contains(from.minusDays(2)));
         }
 
         private List<Reservation> buildReservationsList() {

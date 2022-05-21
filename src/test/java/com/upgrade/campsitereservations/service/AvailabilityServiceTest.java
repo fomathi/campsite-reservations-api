@@ -117,6 +117,7 @@ class AvailabilityServiceTest {
         void testGetAvailability_4() {
             String from = "2022-06-20";
             String to = "2022-06-05";
+
             BadRequestException exception = assertThrows(BadRequestException.class, ()->{
                 service.getAvailability(from, to);
             });
@@ -136,6 +137,7 @@ class AvailabilityServiceTest {
             Availability availabilityDates =  Availability.builder()
                     .availableDates(availableDates)
                     .build();
+
             when(availabilityConfig.getDefaultDateRange()).thenReturn(30);
             when(campsiteAvailabilityManager.findAvailability(from, from.plusDays(30))).thenReturn(availabilityDates);
 
@@ -188,6 +190,35 @@ class AvailabilityServiceTest {
             assertFalse(availability.getAvailableDates().contains(fromDate));
         }
 
+        @Test
+        @DisplayName("Given an invalid date format, then throw BadRequestException")
+        void testGetAvailability_8() {
+            String from = "20-06-2022";
+            String to = "2022-06-05";
+
+            BadRequestException exception = assertThrows(BadRequestException.class, ()->{
+                service.getAvailability(from, to);
+            });
+
+            assertEquals("Invalid date format", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("Given an invalid date format, then throw BadRequestException")
+        void testGetAvailability_9() {
+            LocalDate today = LocalDate.now();
+            LocalDate from = today.plusDays(31);
+            LocalDate to = today.plusDays(35);
+            when(campsiteAvailabilityManager.findAvailability(from, to)).thenReturn(Availability.builder()
+                                                                                                .availableDates(new ArrayList<>())
+                                                                                                .build());
+
+            NoAvailabilityException exception = assertThrows(NoAvailabilityException.class, ()->{
+                service.getAvailability(from.toString(), to.toString());
+            });
+
+            assertEquals("No campsite is available for the provided request", exception.getMessage());
+        }
     }
 
 }

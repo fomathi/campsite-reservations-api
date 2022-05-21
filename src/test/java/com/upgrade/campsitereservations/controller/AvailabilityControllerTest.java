@@ -9,11 +9,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.sql.SQLTimeoutException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -24,8 +24,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(AvailabilityController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class AvailabilityControllerTest {
+
     @Autowired
     MockMvc mockMvc;
 
@@ -47,7 +49,7 @@ class AvailabilityControllerTest {
 
             mockMvc.perform(get("/availability?from=&to=")
                     .contentType("application/json"))
-                    .andExpect(status().is2xxSuccessful());
+                    .andExpect(status().isOk());
         }
 
         @Test
@@ -58,7 +60,7 @@ class AvailabilityControllerTest {
 
             mockMvc.perform(get("/availability?from=&to=")
                     .contentType("application/json"))
-                    .andExpect(status().is4xxClientError());
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -69,7 +71,7 @@ class AvailabilityControllerTest {
 
             mockMvc.perform(get("/availability?from=2023-01-01&to==2023-01-05")
                     .contentType("application/json"))
-                    .andExpect(status().is4xxClientError());
+                    .andExpect(status().isNotFound());
         }
 
 
@@ -81,18 +83,18 @@ class AvailabilityControllerTest {
 
             mockMvc.perform(get("/availability?from=xx&to=yyy")
                     .contentType("application/json"))
-                    .andExpect(status().is4xxClientError());
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
-        @DisplayName("Get Availability and a SQLTimeoutException, then status 400")
+        @DisplayName("Get Availability and a SQLTimeoutException, then status 500")
         void testGetAvailability_5() throws Exception {
 
             when(availabilityService.getAvailability(anyString(), anyString())).thenThrow(NullPointerException.class);
 
             mockMvc.perform(get("/availability?from=&to=")
                     .contentType("application/json"))
-                    .andExpect(status().is5xxServerError());
+                    .andExpect(status().isInternalServerError());
         }
     }
 

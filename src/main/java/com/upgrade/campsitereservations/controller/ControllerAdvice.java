@@ -5,6 +5,7 @@ import com.upgrade.campsitereservations.exception.NoAvailabilityException;
 import com.upgrade.campsitereservations.exception.NotFoundException;
 import com.upgrade.campsitereservations.model.ApiError;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -46,6 +47,16 @@ public class ControllerAdvice {
         log.info("An Unknown exception happened", ex);
         return ApiError.builder()
                 .message(INTERNAL_ERROR)
+                .build();
+    }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    public ApiError handleConstraintViolationException(Exception ex) {
+        log.info("Constraint violation error", ex);
+        return ApiError.builder()
+                .message("A reservation date conflict occurred while trying to add the reservation.")
                 .build();
     }
 }

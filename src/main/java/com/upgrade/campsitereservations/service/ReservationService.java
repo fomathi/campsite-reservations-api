@@ -25,6 +25,7 @@ import java.util.Optional;
 public class ReservationService {
 
     private static final String INVALID_DATE = "Invalid reservation request";
+    private static final String INVALID_DATE_FORMAT = "Invalid date format";
     private static final String INVALID_RESERVATION_START_DATE = "The campsite can be reserved minimum 1 day(s) ahead of arrival and up to 1 month in advance";
     private static final String MAX_RESERVATION_DATES = "The campsite can be reserved for max 3 days";
     private static final String ADD_RESERVATION_FAIL = "Fail to complete the reservation. Verify reservation dates availability";
@@ -51,6 +52,9 @@ public class ReservationService {
     public ReservationResponse addReservation(ReservationRequest request) {
         String from = request.getArrivalDate();
         String to = request.getDepartureDate();
+        if(!validator.isDatesFormatValid(from, to) ) {
+            throw new BadRequestException(INVALID_DATE_FORMAT);
+        }
         if(!validator.isAvailabilityRequestValid(from, to)) {
             throw new BadRequestException(INVALID_DATE);
         }

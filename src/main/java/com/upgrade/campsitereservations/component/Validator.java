@@ -4,9 +4,26 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @Component
 public class Validator {
+
+    public static boolean isDatesFormatValid(String from, String to) {
+        DateTimeFormatter  dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        try {
+            if(StringUtils.isNotEmpty(from)) {
+                LocalDate.parse(from, dateFormatter);
+            }
+            if(StringUtils.isNotEmpty(to)) {
+                LocalDate.parse(to, dateFormatter);
+            }
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+        return true;
+    }
 
     public static boolean isAvailabilityRangeProvided(String from, String to) {
         return StringUtils.isNotEmpty(from) && StringUtils.isNotEmpty(to);
@@ -34,7 +51,7 @@ public class Validator {
     public static boolean isReservationLessThan4Days(String from, String to, int maxReservationDays) {
         LocalDate startDate = LocalDate.parse(from);
         LocalDate endDate = LocalDate.parse(to);
-        LocalDate maxDate = startDate.plusDays(3);
+        LocalDate maxDate = startDate.plusDays(maxReservationDays);
         return maxDate.isAfter(endDate) || maxDate.equals(endDate);
     }
 
