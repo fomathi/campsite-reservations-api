@@ -7,7 +7,6 @@ import com.upgrade.campsitereservations.model.ReservationRequest;
 import com.upgrade.campsitereservations.model.ReservationResponse;
 import com.upgrade.campsitereservations.model.UpdateReservationRequest;
 import com.upgrade.campsitereservations.service.ReservationService;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -75,9 +75,9 @@ class ReservationControllerTest {
         }
 
         @Test
-        @DisplayName("Add reservation and a ConstraintViolationException, then status 409")
+        @DisplayName("Add reservation and a DataIntegrityViolationException, then status 409")
         void testAddReservation_4() throws Exception {
-            when(reservationService.addReservation(any(ReservationRequest.class))).thenThrow(ConstraintViolationException.class);
+            when(reservationService.addReservation(any(ReservationRequest.class))).thenThrow(DataIntegrityViolationException.class);
             mockMvc.perform(post("/reservation")
                     .content(mapper.writeValueAsString(buildRequest()))
                     .contentType("application/json"))
